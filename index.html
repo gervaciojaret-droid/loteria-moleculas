@@ -18,7 +18,7 @@ h1{color:#1b1b1b;}
   background:white;
   padding:15px;
   border-radius:12px;
-  max-width:400px;
+  max-width:420px;
   margin:0 auto 20px;
 }
 
@@ -26,15 +26,10 @@ h1{color:#1b1b1b;}
   background:white;
   padding:20px;
   border-radius:15px;
-  font-size:26px;
-  width:300px;
+  font-size:22px;
+  width:320px;
   margin:15px auto;
   box-shadow:0 4px 8px rgba(0,0,0,.3);
-}
-
-#hint{
-  font-size:18px;
-  margin-bottom:15px;
 }
 
 button{
@@ -50,9 +45,9 @@ button{
 
 #board{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(100px,1fr));
+  grid-template-columns:repeat(4,1fr);
   gap:10px;
-  max-width:500px;
+  max-width:420px;
   margin:0 auto;
 }
 
@@ -67,7 +62,13 @@ button{
 
 .correct{background:#4CAF50;color:white;}
 .wrong{background:#E53935;color:white;}
-.used{pointer-events:none;opacity:.7;}
+.used{pointer-events:none;opacity:.8;}
+
+#result{
+  font-size:22px;
+  margin-top:20px;
+  font-weight:bold;
+}
 </style>
 </head>
 
@@ -78,31 +79,43 @@ button{
 <div id="instructions">
 <p><b>Instrucciones:</b></p>
 <p>1️⃣ Presiona <b>Sacar carta</b></p>
-<p>2️⃣ Escucha la molécula 🔊</p>
-<p>3️⃣ Lee la pista 💡</p>
-<p>4️⃣ Toca la carta correcta</p>
-<p>🟢 Verde = correcto | 🔴 Rojo = incorrecto</p>
+<p>2️⃣ Escucha la pista 🔊</p>
+<p>3️⃣ Toca la molécula correcta</p>
+<p>🟢 Correcto | 🔴 Incorrecto</p>
 </div>
 
 <div id="card">Presiona "Sacar carta"</div>
-<p id="hint"></p>
 
 <button onclick="drawCard()">Sacar carta</button>
 
 <div id="board"></div>
 
+<div id="result"></div>
+
 <script>
 const molecules = [
- {key:"H2O",text:"H₂O – Agua",hint:"La usamos para beber"},
- {key:"CO2",text:"CO₂ – Dióxido de carbono",hint:"Gas que expulsamos al respirar"},
- {key:"O2",text:"O₂ – Oxígeno",hint:"Lo necesitamos para vivir"},
- {key:"N2",text:"N₂ – Nitrógeno",hint:"Es el gas más abundante del aire"},
- {key:"NaCl",text:"NaCl – Sal",hint:"La usamos para la comida"},
- {key:"CH4",text:"CH₄ – Metano",hint:"Gas inflamable"},
- {key:"NH3",text:"NH₃ – Amoníaco",hint:"Tiene olor fuerte"},
+ {key:"H2O",hint:"La usamos para beber"},
+ {key:"CO2",hint:"Gas que expulsamos al respirar"},
+ {key:"O2",hint:"Necesario para vivir"},
+ {key:"N2",hint:"Gas más abundante del aire"},
+ {key:"NaCl",hint:"Se usa en la comida"},
+ {key:"CH4",hint:"Gas inflamable"},
+ {key:"NH3",hint:"Tiene olor fuerte"},
+ {key:"CaCO3",hint:"Está en la piedra caliza"},
+ {key:"H2SO4",hint:"Ácido muy fuerte"},
+ {key:"NaOH",hint:"Base corrosiva"},
+ {key:"KCl",hint:"Sal mineral"},
+ {key:"C6H12O6",hint:"Azúcar que da energía"},
+ {key:"O3",hint:"Protege de los rayos solares"},
+ {key:"NO2",hint:"Gas contaminante"},
+ {key:"HCl",hint:"Ácido del estómago"},
+ {key:"CH3COOH",hint:"Está en el vinagre"}
 ];
 
 let current=null;
+let usedCount=0;
+let correctCount=0;
+
 const board=document.getElementById("board");
 
 molecules.forEach(m=>{
@@ -120,20 +133,34 @@ function speak(text){
 }
 
 function drawCard(){
- current=molecules[Math.floor(Math.random()*molecules.length)];
- document.getElementById("card").textContent=current.text;
- document.getElementById("hint").textContent="💡 Pista: "+current.hint;
- speak(current.text.replace("–",""));
+ const available = molecules.filter(m=>!m.used);
+ if(available.length===0)return;
+ current = available[Math.floor(Math.random()*available.length)];
+ document.getElementById("card").textContent="💡 Pista: "+current.hint;
+ speak(current.hint);
 }
 
 function selectCard(tile,value){
  if(!current)return;
+
+ usedCount++;
+ current.used=true;
+
  if(value===current.key){
    tile.classList.add("correct");
+   correctCount++;
  }else{
    tile.classList.add("wrong");
  }
+
  tile.classList.add("used");
+ current=null;
+
+ if(usedCount===16){
+   speak("¡Lotería!");
+   document.getElementById("result").textContent=
+     "🎉 ¡LOTERÍA! Aciertos: "+correctCount+" de 16";
+ }
 }
 </script>
 
