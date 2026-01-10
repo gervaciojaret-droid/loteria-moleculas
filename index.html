@@ -3,55 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <title>Lotería de Moléculas</title>
+
 <style>
 body{
   font-family: Arial, sans-serif;
   background: linear-gradient(135deg,#74ebd5,#9face6);
-  text-align:center;
-  padding:20px;
+  text-align: center;
+  padding: 20px;
 }
-h1{color:#1b1b1b;}
+
+h1{ color:#1b1b1b; }
+
 #card{
-  background:white;
-  padding:15px;
-  border-radius:12px;
-  font-size:26px;
-  margin:15px auto;
-  width:280px;
-  box-shadow:0 4px 8px rgba(0,0,0,.3);
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 26px;
+  margin: 15px auto;
+  width: 280px;
+  box-shadow: 0 4px 8px rgba(0,0,0,.3);
 }
+
 button{
-  padding:12px 20px;
-  font-size:18px;
-  border:none;
-  border-radius:10px;
-  background:#6c63ff;
-  color:white;
-  cursor:pointer;
+  padding: 12px 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 10px;
+  background: #6c63ff;
+  color: white;
+  cursor: pointer;
 }
+
 #board{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:12px;
-  max-width:500px;
-  margin:25px auto;
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 12px;
+  max-width: 500px;
+  margin: 25px auto;
 }
+
 .tile{
-  background:white;
-  padding:15px;
-  border-radius:12px;
-  font-size:20px;
-  cursor:pointer;
-  box-shadow:0 3px 6px rgba(0,0,0,.3);
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0,0,0,.3);
 }
-.correct{background:#4CAF50;color:white;}
-.wrong{background:#E53935;color:white;}
-.used{pointer-events:none;opacity:.8;}
+
+.correct{ background:#4CAF50; color:white; }
+.wrong{ background:#E53935; color:white; }
+.used{ pointer-events:none; opacity:.8; }
 </style>
 </head>
+
 <body>
 
 <h1>🎲 Lotería de Moléculas</h1>
+
+<p>Presiona “Sacar carta” y toca la carta correcta</p>
 
 <div id="card">Presiona “Sacar carta”</div>
 <button onclick="drawCard()">Sacar carta</button>
@@ -65,7 +75,6 @@ const molecules = [
 ];
 
 let current = "";
-
 const board = document.getElementById("board");
 
 molecules.forEach(m=>{
@@ -78,12 +87,12 @@ molecules.forEach(m=>{
 
 function drawCard(){
   current = molecules[Math.floor(Math.random()*molecules.length)];
-  document.getElementById("card").textContent=current;
+  document.getElementById("card").textContent = current;
 }
 
 function selectCard(tile,value){
-  if(!current)return;
-  if(value===current){
+  if(!current) return;
+  if(value === current){
     tile.classList.add("correct");
   }else{
     tile.classList.add("wrong");
