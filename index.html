@@ -4,92 +4,91 @@
 <meta charset="UTF-8">
 <title>Lotería de Moléculas</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #74ebd5, #9face6);
-    text-align: center;
-    padding: 20px;
-  }
-  h1 { color: #1b1b1b; }
-  .card {
-    background: white;
-    display: inline-block;
-    padding: 20px;
-    margin: 15px;
-    border-radius: 15px;
-    font-size: 28px;
-    min-width: 200px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  }
-  .correct { background: #4CAF50; color: white; }
-  .wrong { background: #E53935; color: white; }
-  button {
-    padding: 15px 25px;
-    font-size: 18px;
-    border: none;
-    border-radius: 10px;
-    background: #673ab7;
-    color: white;
-    cursor: pointer;
-  }
-  button:hover { background: #512da8; }
-  .instructions {
-    background: rgba(255,255,255,0.85);
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-  }
+body{
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg,#74ebd5,#9face6);
+  text-align:center;
+  padding:20px;
+}
+h1{color:#1b1b1b;}
+#card{
+  background:white;
+  padding:15px;
+  border-radius:12px;
+  font-size:26px;
+  margin:15px auto;
+  width:280px;
+  box-shadow:0 4px 8px rgba(0,0,0,.3);
+}
+button{
+  padding:12px 20px;
+  font-size:18px;
+  border:none;
+  border-radius:10px;
+  background:#6c63ff;
+  color:white;
+  cursor:pointer;
+}
+#board{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  max-width:500px;
+  margin:25px auto;
+}
+.tile{
+  background:white;
+  padding:15px;
+  border-radius:12px;
+  font-size:20px;
+  cursor:pointer;
+  box-shadow:0 3px 6px rgba(0,0,0,.3);
+}
+.correct{background:#4CAF50;color:white;}
+.wrong{background:#E53935;color:white;}
+.used{pointer-events:none;opacity:.8;}
 </style>
 </head>
-
 <body>
 
 <h1>🎲 Lotería de Moléculas</h1>
 
-<div class="instructions">
-  <p>🎯 <b>Instrucciones:</b></p>
-  <p>Presiona “Sacar carta”.</p>
-  <p>Di en voz alta si la molécula es correcta.</p>
-  <p>✔ Verde = correcto</p>
-  <p>❌ Rojo = incorrecto</p>
-</div>
+<div id="card">Presiona “Sacar carta”</div>
+<button onclick="drawCard()">Sacar carta</button>
 
-<div id="card" class="card">Presiona el botón</div>
-
-<br><br>
-
-<button onclick="newCard()">Sacar carta</button>
+<div id="board"></div>
 
 <script>
 const molecules = [
-  "H₂O – Agua",
-  "CO₂ – Dióxido de carbono",
-  "O₂ – Oxígeno",
-  "N₂ – Nitrógeno",
-  "CH₄ – Metano",
-  "NH₃ – Amoníaco",
-  "NaCl – Sal",
-  "C₆H₁₂O₆ – Glucosa",
-  "HCl – Ácido clorhídrico",
-  "CaCO₃ – Carbonato de calcio"
+  "H₂O","CO₂","O₂","N₂","NaCl","NH₃","CH₄","HCl",
+  "CaCO₃","C₆H₁₂O₆","O₃","H₂SO₄","NO₂","NaOH","KCl","H₂O₂"
 ];
 
-function speak(text) {
-  const msg = new SpeechSynthesisUtterance(text);
-  msg.lang = "es-ES";
-  speechSynthesis.speak(msg);
+let current = "";
+
+const board = document.getElementById("board");
+
+molecules.forEach(m=>{
+  const d=document.createElement("div");
+  d.className="tile";
+  d.textContent=m;
+  d.onclick=()=>selectCard(d,m);
+  board.appendChild(d);
+});
+
+function drawCard(){
+  current = molecules[Math.floor(Math.random()*molecules.length)];
+  document.getElementById("card").textContent=current;
 }
 
-function newCard() {
-  const card = document.getElementById("card");
-  const molecule = molecules[Math.floor(Math.random() * molecules.length)];
-
-  const correct = Math.random() > 0.5;
-
-  card.textContent = molecule;
-  card.className = "card " + (correct ? "correct" : "wrong");
-
-  speak(molecule + (correct ? ". Correcto" : ". Incorrecto"));
+function selectCard(tile,value){
+  if(!current)return;
+  if(value===current){
+    tile.classList.add("correct");
+  }else{
+    tile.classList.add("wrong");
+  }
+  tile.classList.add("used");
 }
 </script>
 
