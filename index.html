@@ -40,7 +40,7 @@ button{
   background:#6a5acd;
   color:white;
   cursor:pointer;
-  margin-bottom:20px;
+  margin:5px;
 }
 
 #board{
@@ -81,19 +81,19 @@ button{
 <p>1️⃣ Presiona <b>Sacar carta</b></p>
 <p>2️⃣ Escucha la pista 🔊</p>
 <p>3️⃣ Toca la molécula correcta</p>
-<p>🟢 Correcto | 🔴 Incorrecto</p>
 </div>
 
 <div id="card">Presiona "Sacar carta"</div>
 
 <button onclick="drawCard()">Sacar carta</button>
+<button onclick="resetGame()">🔄 Reiniciar</button>
 
 <div id="board"></div>
 
 <div id="result"></div>
 
 <script>
-const molecules = [
+const data = [
  {key:"H2O",hint:"La usamos para beber"},
  {key:"CO2",hint:"Gas que expulsamos al respirar"},
  {key:"O2",hint:"Necesario para vivir"},
@@ -112,30 +112,34 @@ const molecules = [
  {key:"CH3COOH",hint:"Está en el vinagre"}
 ];
 
+let molecules=[];
 let current=null;
 let usedCount=0;
 let correctCount=0;
-
 const board=document.getElementById("board");
 
-molecules.forEach(m=>{
- const d=document.createElement("div");
- d.className="tile";
- d.textContent=m.key;
- d.onclick=()=>selectCard(d,m.key);
- board.appendChild(d);
-});
-
 function speak(text){
- const voz=new SpeechSynthesisUtterance(text);
- voz.lang="es-ES";
- speechSynthesis.speak(voz);
+ const u=new SpeechSynthesisUtterance(text);
+ u.lang="es-ES";
+ speechSynthesis.speak(u);
+}
+
+function initBoard(){
+ board.innerHTML="";
+ molecules=data.map(m=>({...m,used:false}));
+ molecules.forEach(m=>{
+   const d=document.createElement("div");
+   d.className="tile";
+   d.textContent=m.key;
+   d.onclick=()=>selectCard(d,m.key);
+   board.appendChild(d);
+ });
 }
 
 function drawCard(){
- const available = molecules.filter(m=>!m.used);
+ const available=molecules.filter(m=>!m.used);
  if(available.length===0)return;
- current = available[Math.floor(Math.random()*available.length)];
+ current=available[Math.floor(Math.random()*available.length)];
  document.getElementById("card").textContent="💡 Pista: "+current.hint;
  speak(current.hint);
 }
@@ -162,6 +166,18 @@ function selectCard(tile,value){
      "🎉 ¡LOTERÍA! Aciertos: "+correctCount+" de 16";
  }
 }
+
+function resetGame(){
+ usedCount=0;
+ correctCount=0;
+ current=null;
+ document.getElementById("card").textContent="Presiona \"Sacar carta\"";
+ document.getElementById("result").textContent="";
+ speechSynthesis.cancel();
+ initBoard();
+}
+
+initBoard();
 </script>
 
 </body>
